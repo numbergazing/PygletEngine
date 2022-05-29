@@ -2,7 +2,9 @@ from abc import ABC, abstractmethod
 from typing import List
 from uuid import uuid4
 
-import pyglet.app
+import pyglet
+
+from core.logging import engine_log
 
 
 class Object(ABC):
@@ -30,11 +32,27 @@ Objects = List[Object]
 
 class Engine:
 
-    def __init__(self):
-        self.objects: Objects = []
+    def _startup(self):
 
-    def startup(self):
-        pass
+        engine_log.info("Engine is firing up.")
+
+        self.objects = []
+        self.window = pyglet.window.Window()
+
+        engine_log.info("Startup is finished.")
+
+        pyglet.app.run()
+
+    def __init__(self):
+
+        self.objects: Objects
+        self.window: pyglet.window.Window
+
+        self._startup()
 
     def shutdown(self):
-        pass
+
+        self.window.close()
+        del self.objects
+
+        engine_log.info("Engine is shutting down.")
