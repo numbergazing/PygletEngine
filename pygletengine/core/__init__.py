@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 from uuid import uuid4
 
+import pyglet.app
+
 
 class Object(ABC):
 
@@ -24,3 +26,15 @@ class Drawable(ABC):
 
 
 Objects = List[Object]
+
+
+class Engine:
+
+    def __init__(self):
+        self.objects: Objects = []
+
+    def startup(self):
+        pass
+
+    def shutdown(self):
+        pass
