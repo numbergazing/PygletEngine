@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 from uuid import uuid4
 
 import pyglet
@@ -27,10 +27,10 @@ class Drawable(ABC):
         pass
 
 
-Objects = List[Object]
+_Objects = List[Object]
 
 
-class EngineMeta(type):
+class _EngineMeta(type):
 
     _instances = {}
 
@@ -43,19 +43,23 @@ class EngineMeta(type):
         return cls._instances[cls]
 
 
-class Engine(metaclass=EngineMeta):
+class Engine(metaclass=_EngineMeta):
 
     def __init__(self):
 
-        self.objects: Objects
+        self._objects: _Objects
         self._viewport: _Viewport
 
         engine_log.info("Engine is firing up.")
 
-        self.objects = []
+        self._objects = []
         self._viewport = None
 
-    def startup(self):
+    @property
+    def objects(self) -> Tuple[_Objects]:
+        return tuple(*self._objects)
+
+    def startup(self) -> None:
 
         self._viewport = _Viewport()
 
@@ -63,18 +67,17 @@ class Engine(metaclass=EngineMeta):
 
         pyglet.app.run()
 
-    def shutdown(self):
+    def shutdown(self) -> None:
 
         self._viewport.close()
-        del self.objects
 
         engine_log.info("Engine is shutting down.")
 
-    def add_objects(self, *objs: List[Object]):
-        self.objects.extend(*objs)
+    def add_objects(self, *objs: List[Object]) -> None:
+        self._objects.extend(objs)
 
-    def remove_objects(self, *uids: List[str]):
-        objs_to_delete = [obj for obj in self.objects if obj.uid in uids]
+    def remove_objects(self, *uids: List[str]) -> None:
+        objs_to_delete = [obj for obj in self._objects if obj.uid in uids]
         for obj in objs_to_delete:
             del obj
 
@@ -89,4 +92,5 @@ class _Viewport(pyglet.window.Window):
         self.clear()
         for obj in self._engine.objects:
             if issubclass(type(obj), Drawable):
+                obj: Drawable
                 obj.draw()
