@@ -1,5 +1,4 @@
-from pygletengine.core import Engine
-from pygletengine.core.types import Vertex2D
+from pygletengine.core import Engine, Vertex2D
 
 
 def test_engine_singleness():
