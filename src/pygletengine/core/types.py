@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 from uuid import uuid4
 
+import pyglet
+
 
 class Object(ABC):
 
@@ -35,7 +37,7 @@ class Vertex2D(Object, Updatable, Drawable):
         self.y = y
 
     def draw(self):
-        pass
+        pyglet.graphics.draw(1, pyglet.gl.GL_POINTS, ("v2i", (self.x, self.y)))
 
 
 Objects = List[Object]
